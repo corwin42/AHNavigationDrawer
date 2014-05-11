@@ -20,7 +20,7 @@ import de.amberhome.navdrawer.DrawerLayout.LayoutParams;
 
 @ActivityObject
 @ShortName("AHNavigationDrawer")
-@Version(1.20f)
+@Version(1.21f)
 @Author("Markus Stipp")
 @DependsOn(values = { "android-support-v4" })
 @Events(values = { "DrawerClosed (DrawerGravity as Int)", "DrawerOpened (DrawerGravity as Int)",
@@ -75,8 +75,8 @@ public class NavigationDrawer {
 	public void Initialize2(BA ba, String EventName, PanelWrapper Panel,
 			int NavWidth, int Gravity) {
 
-		LayoutParams lp = new LayoutParams(LayoutParams.FILL_PARENT,
-				LayoutParams.FILL_PARENT);
+		LayoutParams lp = new LayoutParams(Panel.getWidth(),
+				Panel.getHeight());
 
 		mba = ba;
 		mEventName = EventName.toLowerCase();
@@ -91,9 +91,9 @@ public class NavigationDrawer {
 		mNavigationPanel.Initialize(ba, "");
 
 		LayoutParams navlp = new LayoutParams(NavWidth,
-				LayoutParams.FILL_PARENT, Gravity);
+				Panel.getHeight(), Gravity);
 		mNavDrawer.addView(mContentPanel.getObject(),
-				LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+				Panel.getWidth(), Panel.getHeight());
 		mNavDrawer.addView(mNavigationPanel.getObject(), navlp);
 
 		Panel.getObject().addView(mNavDrawer);
