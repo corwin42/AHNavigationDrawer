@@ -11,7 +11,7 @@ import de.amberhome.navdrawer.internal.MaterialMenuDrawable.IconState;
 import de.amberhome.navdrawer.internal.MaterialMenuDrawable.Stroke;
 
 @ShortName("MaterialMenuDrawable")
-@DependsOn(values = { "nineoldandroid-2.4.0" })
+@DependsOn(values = { "nineoldandroids-2.4.0" })
 @ActivityObject
 public class MaterialMenuDrawableWrapper extends AbsObjectWrapper<MaterialMenuDrawable> {
 

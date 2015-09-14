@@ -22,7 +22,7 @@ import de.amberhome.navdrawer.internal.MyPanelWrapper;
 
 @ActivityObject
 @ShortName("AHNavigationDrawer")
-@Version(1.3f)
+@Version(1.4f)
 @Author("Markus Stipp")
 @DependsOn(values = { "android-support-v4" })
 @Events(values = { "DrawerClosed (DrawerGravity as Int)", "DrawerOpened (DrawerGravity as Int)",
