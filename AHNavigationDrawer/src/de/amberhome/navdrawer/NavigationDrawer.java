@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.LayoutParams;
 import android.support.v4.widget.ViewDragHelper;
 import android.view.Gravity;
 import android.view.View;
@@ -16,11 +18,11 @@ import anywheresoftware.b4a.BA.Events;
 import anywheresoftware.b4a.BA.ShortName;
 import anywheresoftware.b4a.BA.Version;
 import anywheresoftware.b4a.objects.PanelWrapper;
-import de.amberhome.navdrawer.DrawerLayout.LayoutParams;
+import de.amberhome.navdrawer.internal.MyPanelWrapper;
 
 @ActivityObject
 @ShortName("AHNavigationDrawer")
-@Version(1.21f)
+@Version(1.3f)
 @Author("Markus Stipp")
 @DependsOn(values = { "android-support-v4" })
 @Events(values = { "DrawerClosed (DrawerGravity as Int)", "DrawerOpened (DrawerGravity as Int)",
@@ -30,6 +32,8 @@ public class NavigationDrawer {
 	private DrawerLayout mNavDrawer;
 	private PanelWrapper mContentPanel;
 	private PanelWrapper mNavigationPanel;
+	private PanelWrapper mContentPanelInternal;
+	private PanelWrapper mNavigationPanelInternal;
 	private PanelWrapper mNavigationPanel2;
 	private BA mba;
 	private String mEventName;
@@ -75,8 +79,7 @@ public class NavigationDrawer {
 	public void Initialize2(BA ba, String EventName, PanelWrapper Panel,
 			int NavWidth, int Gravity) {
 
-		LayoutParams lp = new LayoutParams(Panel.getWidth(),
-				Panel.getHeight());
+		LayoutParams lp = new LayoutParams(Panel.getWidth(), Panel.getHeight());
 
 		mba = ba;
 		mEventName = EventName.toLowerCase();
@@ -90,20 +93,33 @@ public class NavigationDrawer {
 		mNavigationPanel = new PanelWrapper();
 		mNavigationPanel.Initialize(ba, "");
 
+		mContentPanelInternal = new PanelWrapper();
+		mContentPanelInternal.Initialize(ba, "");
+
+		mNavigationPanelInternal = new PanelWrapper();
+		mNavigationPanelInternal.Initialize(ba, "");
+
 		LayoutParams navlp = new LayoutParams(NavWidth,
 				Panel.getHeight(), Gravity);
-		mNavDrawer.addView(mContentPanel.getObject(),
+		
+		mNavDrawer.addView(mContentPanelInternal.getObject(),
 				Panel.getWidth(), Panel.getHeight());
-		mNavDrawer.addView(mNavigationPanel.getObject(), navlp);
-
+		mNavDrawer.addView(mNavigationPanelInternal.getObject(), navlp);
+		
+		mContentPanelInternal.AddView(mContentPanel.getObject(), 0, 0, mContentPanelInternal.getWidth(), mContentPanelInternal.getHeight());
+		mNavigationPanelInternal.AddView(mNavigationPanel.getObject(), 0, 0, mNavigationPanelInternal.getWidth(), mNavigationPanelInternal.getHeight());
+		
 		Panel.getObject().addView(mNavDrawer);
+		Panel.getObject().setClickable(true);
+		mNavigationPanelInternal.getObject().setClickable(true);
+		mContentPanelInternal.getObject().setClickable(true);
 
 		mNavDrawer.setDrawerListener(new DrawerLayout.DrawerListener() {
 
 			@Override
 			public void onDrawerClosed(View arg0) {
 				if (mba.subExists(mEventName + "_drawerclosed")) {
-					LayoutParams lp = (DrawerLayout.LayoutParams)arg0.getLayoutParams();
+					android.support.v4.widget.DrawerLayout.LayoutParams lp = (DrawerLayout.LayoutParams)arg0.getLayoutParams();
 					mba.raiseEventFromUI(this, mEventName + "_drawerclosed",
 							new Object[] { lp.gravity });
 				}
@@ -112,7 +128,7 @@ public class NavigationDrawer {
 			@Override
 			public void onDrawerOpened(View arg0) {
 				if (mba.subExists(mEventName + "_draweropened")) {
-					LayoutParams lp = (DrawerLayout.LayoutParams)arg0.getLayoutParams();
+					android.support.v4.widget.DrawerLayout.LayoutParams lp = (DrawerLayout.LayoutParams)arg0.getLayoutParams();
 					mba.raiseEventFromUI(this, mEventName + "_draweropened",
 							new Object[] { lp.gravity });
 				}
@@ -121,7 +137,7 @@ public class NavigationDrawer {
 			@Override
 			public void onDrawerSlide(View arg0, float arg1) {
 				if (mba.subExists(mEventName + "_drawerslide")) {
-					LayoutParams lp = (DrawerLayout.LayoutParams)arg0.getLayoutParams();
+					android.support.v4.widget.DrawerLayout.LayoutParams lp = (DrawerLayout.LayoutParams)arg0.getLayoutParams();
 					mba.raiseEvent(this, mEventName + "_drawerslide",
 							new Object[] { arg1, lp.gravity });
 				}
@@ -145,12 +161,13 @@ public class NavigationDrawer {
 	 * Width - width of the new navigation drawer
 	 * Gravity - gravity for the drawer
 	 */
+	@SuppressWarnings("deprecation")
 	public void AddSecondaryDrawer(int Width, int Gravity) {
 
-		mNavigationPanel2 = new PanelWrapper();
+		mNavigationPanel2 = new MyPanelWrapper();
 		mNavigationPanel2.Initialize(mba, "");
 
-		LayoutParams navlp = new LayoutParams(Width,
+		android.support.v4.widget.DrawerLayout.LayoutParams navlp = new android.support.v4.widget.DrawerLayout.LayoutParams(Width,
 				LayoutParams.FILL_PARENT, Gravity);
 		mNavDrawer.addView(mNavigationPanel2.getObject(), navlp);
 	}
@@ -314,7 +331,19 @@ public class NavigationDrawer {
 		mEdgeSize.setInt(draggerObj, EdgeSize);
 	}
 
-	
+	/**
+	 * Let the DrawerLayout fit the system window size (Overlaps status bar)
+	 */
+	public void setFitsSystemWindows(boolean Flag) {
+		mNavDrawer.setFitsSystemWindows(Flag);
+	}
+
+	/**
+	 * Sets the statusbar background color. Only works if FitsSystemWindows is set to true.
+	 */
+	public void setStatusBarColor(int Color) {
+		mNavDrawer.setStatusBarBackgroundColor(Color);
+	}
 	
 }
 

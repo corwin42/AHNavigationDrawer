@@ -1,5 +1,6 @@
 package de.amberhome.navdrawer;
 
+import de.amberhome.navdrawer.internal.SlideDrawable;
 import android.graphics.drawable.Drawable;
 import anywheresoftware.b4a.AbsObjectWrapper;
 import anywheresoftware.b4a.BA.ShortName;

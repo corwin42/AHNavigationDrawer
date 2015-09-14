@@ -1,4 +1,4 @@
-package de.amberhome.navdrawer;
+package de.amberhome.navdrawer.internal;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
